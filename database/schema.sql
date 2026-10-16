@@ -1,7 +1,7 @@
 CREATE DATABASE IF NOT EXISTS passkey_rbac;
 USE passkey_rbac;
 
-CREATE TABLE User (
+CREATE TABLE IF NOT EXISTS`User` (
     userID INT AUTO_INCREMENT PRIMARY KEY,
     firstName VARCHAR(50) NOT NULL,
     lastName VARCHAR(50) NOT NULL,
@@ -12,7 +12,7 @@ CREATE TABLE User (
 );
 
 CREATE TABLE Credential (
-    credentialID VARCHAR(255) PRIMARY KEY,
+    credentialID VARCHAR(1400) CHARACTER SET ascii PRIMARY KEY,
     userID INT NOT NULL,
     publicKey TEXT NOT NULL,
     signCount INT NOT NULL DEFAULT 0,
@@ -52,7 +52,7 @@ CREATE TABLE Course (
 CREATE TABLE Enrollment (
     studentID VARCHAR(20) NOT NULL,
     courseCode VARCHAR(20) NOT NULL,
-    grade DECIMAL(5,2) NULL,
+    grade VARCHAR(2) DEFAULT '',
 
     PRIMARY KEY (studentID, courseCode),
 
@@ -87,6 +87,33 @@ CREATE TABLE Assignment (
 
 INSERT INTO User (userID, firstName, lastName, email, role, signupCode, codeUsed)
 VALUES (1, 'Serwa', 'Noma', 'serwa.noma@uni.edu', 'STUDENT', 'GJ4628', FALSE),
-VALUES (2, 'Kweku', 'Luckyman', 'kweku.luckyman@uni.edu', 'STUDENT', 'TY5724', FALSE),
-VALUES (3, 'Kipembe', 'Kojo', 'kkipembe@uni.edu', 'LECTUER', 'DT0173', FALSE);
+(2, 'Kweku', 'Luckyman', 'kweku.luckyman@uni.edu', 'STUDENT', 'TY5724', FALSE),
+(3, 'Kipembe', 'Kojo', 'kkipembe@uni.edu', 'LECTURER', 'DT0173', FALSE);
 
+INSERT INTO Student(userID, studentID)
+VALUES(1, '53622027'),
+(2, '67842027');
+
+INSERT INTO Lecturer(userID, lecturerID)
+VALUES(3, 'HGE472');
+
+INSERT INTO Course(courseCode, courseTitle)
+VALUES('IS451', 'Information and Systems Securitry'),
+('ME101', 'Engineering Mechanics'),
+('CS415', 'Software Engineering'),
+('CS323', 'Database Systems and Management'),
+('CS452', 'Machine Learning'),
+('CS254', 'Introduction to Artificial intelligence'),
+('CS361', 'Introduction to Modeling and Simulation');
+
+INSERT INTO Enrollment(studentID, courseCode, grade)
+VALUES('53622027', 'IS451', 'A+'),
+('53622027', 'CS323', 'B+'),
+('53622027', 'CS415', 'A'),
+('53622027', 'CS452', 'A+'),
+('67842027', 'IS451', 'B+'),
+('67842027', 'CS254', 'A+'),
+('67842027', 'CS361', 'A+');
+
+INSERT INTO Assignment(lecturerID, courseCode)
+VALUES('HGE472', 'IS451');
