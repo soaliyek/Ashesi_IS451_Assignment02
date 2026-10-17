@@ -13,10 +13,12 @@
     <div id="remarks" role="status" aria-live="polite">
         
     </div>
-    <form id="signup" action="../api/registerkey.php" method="post">
-        <div id="image">
 
-        </div>
+    <div id="image">
+
+    </div>
+
+    <form id="signup" action="../api/registerkey.php" method="post">
         <div id="part1" class="part">
             <div class="form_title">
                 <h1>Registration</h1>
@@ -30,8 +32,6 @@
             <div class="button">
                 <input type="submit" value="Register" id="registerButton">
             </div>
-        </div>
-        
         </div>
     </form>
     <script src="auth.js" defer></script>

@@ -1,6 +1,5 @@
 #Ashesi University - IS451: Information and Systems Security
 
-
 Dashboard Elements
 
 Profile
@@ -10,6 +9,8 @@ Grades
 View Grade
 Course Roster
 Edit Grades
+
+- Using Fetch API for all API requests
 
 ## Passkey registration
 

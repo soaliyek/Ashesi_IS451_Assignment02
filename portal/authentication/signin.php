@@ -7,28 +7,32 @@
     <title>Sign In</title>
 </head>
 <body>
-    <div id="remarks">
+
+    <div id="remarks" role="status" aria-live="polite">
+        
+    </div>
+
+    <div id="image">
 
     </div>
-    <form id="signin">
 
-        <div id="part2" class="part">
+    <form id="signin" action="../api/registerkey.php" method="post">
+        
+        <div id="part1" class="part">
             <div class="form_title">
                 <h1>Welcome Back</h1>
+            </div>
+            <div class="form_data">
+                <input type="email" name="email" id="email" class="entry" placeholder="Email" maxlength="100" autocomplete="on" required>
             </div>
             <div class="additonals">
                 <p>Have You Been Already Registered? <a href="signup.php">Register Instead</a></p>
             </div>
             <div class="button">
-                <input type="button" value="Sign In" onclick="next()">
+                <input type="submit" value="Sign In" id="loginButton">
             </div>
         </div>
-
-        <div id="image">
-
-        </div>
     </form>
-
-    <!-- <script src="../public/js/signinvalidation.js"></script> -->
+    <script src="auth.js" defer></script>
 </body>
 </html>
