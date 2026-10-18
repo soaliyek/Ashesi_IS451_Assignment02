@@ -144,67 +144,69 @@ function getCredentialVerificationArgs(options){
 }
 
 // Listen to the form submission
-signupFormElement.addEventListener('submit', async (event) => {
-    event.preventDefault();
-    remarksElement.textContent = '';
-
-    // Veryfy if browser supports credentials
-    if(!window.PublicKeyCredential || !navigator.credential){
-        remarksElement.textContent = 'Your browser does not support passkey registrations.';
-        return;
-    }
-
-    // Disable the button to avoid another submission
-    registerButton.disabled = true;
-
-    // Start registration
-    try {
-        let requestBody = {
-            action: 'start',
-            signupCode: signupCodeInputElement.value.trim()
+if(signupFormElement){
+    signupFormElement.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        remarksElement.textContent = '';
+    
+        // Veryfy if browser supports credentials
+        if(!window.PublicKeyCredential || !navigator.credentials){
+            remarksElement.textContent = 'Your browser does not support passkey registrations.';
+            return;
         }
-
-        // Get options from server
-        const { options } = await requestKeyRegistration(requestBody);
-
-        // IMPORTANT STEP: Transform the options properties
-        options.challenge = decodeBase64Url(options.challenge);
-        options.user.id = decodeBase64Url(options.user.id);
-
-        // Generate credential
-        const registrationArgs = getCredentialRegistrationArgs(options);
-        const credential = await createCredential(registrationArgs);
-
-        requestBody = {
-            action: 'finish',
-            credential: {
-                id: encodeBase64Url(credential.rawId),
-                type: credential.type,
-                clientDataJSON: encodeBase64Url(credential.response.clientDataJSON),
-                attestationObject: encodeBase64Url(credential.response.attestationObject)
+    
+        // Disable the button to avoid another submission
+        registerButton.disabled = true;
+    
+        // Start registration
+        try {
+            let requestBody = {
+                action: 'start',
+                signupCode: signupCodeInputElement.value.trim()
             }
+    
+            // Get options from server
+            const { options } = await requestKeyRegistration(requestBody);
+    
+            // IMPORTANT STEP: Transform the options properties
+            options.challenge = decodeBase64Url(options.challenge);
+            options.user.id = decodeBase64Url(options.user.id);
+    
+            // Generate credential
+            const registrationArgs = getCredentialRegistrationArgs(options);
+            const credential = await createCredential(registrationArgs);
+    
+            requestBody = {
+                action: 'finish',
+                credential: {
+                    id: encodeBase64Url(credential.rawId),
+                    type: credential.type,
+                    clientDataJSON: encodeBase64Url(credential.response.clientDataJSON),
+                    attestationObject: encodeBase64Url(credential.response.attestationObject)
+                }
+            }
+    
+            // Send credential to server
+            const { confirmation } = await requestKeyRegistration(requestBody);
+    
+            // IMPORTANT STEP: Transform the options properties
+    
+            // Authorization
+            if (confirmation.verdict === 'success'){
+                remarksElement.textContent = 'Passkey Registered Successfully. Redirecting to Dashboard...';
+                window.location.replace('../public/dashboard.php');
+                //window.location.href = '../public/dashboard.php';
+            }
+    
         }
-
-        // Send credential to server
-        const { confirmation } = await requestKeyRegistration(requestBody);
-
-        // IMPORTANT STEP: Transform the options properties
-
-        // Authorization
-        if (confirmation.verdict === 'success'){
-            remarksElement.textContent = 'Passkey Registered Successfully. Redirecting to Dashboard...';
-            window.location.replace('../public/dashboard.php');
-            //window.location.href = '../public/dashboard.php';
+        catch (error) {
+            remarksElement.textContent = error instanceof Error
+                ? error.message
+                : 'Registration could not be completed. Please try again.';
+            registerButton.disabled = false;
         }
-
-    }
-    catch (error) {
-        remarksElement.textContent = error instanceof Error
-            ? error.message
-            : 'Registration could not be completed. Please try again.';
-        registerButton.disabled = false;
-    }
-});
+    });
+}
 
 
 /////// SIGN IN
@@ -212,68 +214,70 @@ const loginButton = document.getElementById('loginButton');
 const signinFormElement = document.getElementById('signin');
 const emailElement = document.getElementById('email');
 
-signinFormElement.addEventListener('submit', async (event) => {
-    event.preventDefault();
-    remarksElement.textContent = '';
-
-    // Veryfy if browser supports credentials
-    if(!window.PublicKeyCredential || !navigator.credential){
-        remarksElement.textContent = 'Your browser does not support passkey login.';
-        return;
-    }
-
-    // Disable the button to avoid another submission
-    loginButton.disabled = true;
-
-    // Start Login
-    try {
-        let requestBody = {
-            action: 'start',
-            email: emailElement.value.trim()
+if(signinFormElement){
+    signinFormElement.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        remarksElement.textContent = '';
+    
+        // Veryfy if browser supports credentials
+        if(!window.PublicKeyCredential || !navigator.credentials){
+            remarksElement.textContent = 'Your browser does not support passkey login.';
+            return;
         }
-
-        // Get options from server
-        const { options } = await requestLogin(requestBody);
-
-        // IMPORTANT STEP: Transform the options properties
-        options.challenge = decodeBase64Url(options.challenge);
-        options.credentialID = decodeBase64Url(options.credentialID);
-
-        // Generate credential
-        const verificationArgs = getCredentialVerificationArgs(options);
-        const assertion = await getAssertion(verificationArgs);
-
-        requestBody = {
-            action: 'finish',
-            assertion: {
-                id: encodeBase64Url(assertion.rawId),
-                type: assertion.type,
-                clientDataJSON: encodeBase64Url(assertion.response.clientDataJSON),
-                authenticatorData: encodeBase64Url(assertion.response.authenticatorData),
-                signature: encodeBase64Url(assertion.response.signature)
+    
+        // Disable the button to avoid another submission
+        loginButton.disabled = true;
+    
+        // Start Login
+        try {
+            let requestBody = {
+                action: 'start',
+                email: emailElement.value.trim()
             }
+    
+            // Get options from server
+            const { options } = await requestLogin(requestBody);
+    
+            // IMPORTANT STEP: Transform the options properties
+            options.challenge = decodeBase64Url(options.challenge);
+            options.credentialID = decodeBase64Url(options.credentialID);
+    
+            // Generate credential
+            const verificationArgs = getCredentialVerificationArgs(options);
+            const assertion = await getAssertion(verificationArgs);
+    
+            requestBody = {
+                action: 'finish',
+                assertion: {
+                    id: encodeBase64Url(assertion.rawId),
+                    type: assertion.type,
+                    clientDataJSON: encodeBase64Url(assertion.response.clientDataJSON),
+                    authenticatorData: encodeBase64Url(assertion.response.authenticatorData),
+                    signature: encodeBase64Url(assertion.response.signature)
+                }
+            }
+    
+            // Send credential to server
+            const { confirmation } = await requestLogin(requestBody);
+    
+            // IMPORTANT STEP: Transform the options properties
+    
+            // Authorization
+            if (confirmation.verdict === 'success'){
+                remarksElement.textContent = 'Logged In Successfully. Redirecting to Dashboard...';
+                window.location.replace('../public/dashboard.php');
+                //window.location.href = '../public/dashboard.php';
+            }
+    
         }
-
-        // Send credential to server
-        const { confirmation } = await requestLogin(requestBody);
-
-        // IMPORTANT STEP: Transform the options properties
-
-        // Authorization
-        if (confirmation.verdict === 'success'){
-            remarksElement.textContent = 'Logged In Successfully. Redirecting to Dashboard...';
-            window.location.replace('../public/dashboard.php');
-            //window.location.href = '../public/dashboard.php';
+        catch (error) {
+            remarksElement.textContent = error instanceof Error
+                ? error.message
+                : 'Login could not be completed. Please try again.';
+            loginButton.disabled = false;
         }
-
-    }
-    catch (error) {
-        remarksElement.textContent = error instanceof Error
-            ? error.message
-            : 'Login could not be completed. Please try again.';
-        loginButton.disabled = false;
-    }
-});
+    });
+}
 
 
 /**

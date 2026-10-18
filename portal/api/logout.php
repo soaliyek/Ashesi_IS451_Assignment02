@@ -1,17 +1,22 @@
 <?php
 session_start();
 
-// Destroy all session data
-session_unset();
+// Unset all session variables
+$_SESSION = array();
+
+// If it's desired to kill the session cookie, delete it as well
+if (ini_get("session.use_cookies")) {
+    $params = session_get_cookie_params();
+    setcookie(session_name(), '', time() - 42000,
+        $params["path"], $params["domain"],
+        $params["secure"], $params["httponly"]
+    );
+}
+
+// Destroy the session on the server
 session_destroy();
 
-header("Content-Type: application/json");
-
-// Return JSON for fetch()
-echo json_encode([
-    "status" => "success",
-    "message" => "Logged out successfully"
-]);
-exit();
-
+// Redirect back to the login page
+header("Location: ../authentication/signin.php");
+exit;
 ?>

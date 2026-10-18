@@ -1,4 +1,11 @@
 <?php
+    session_start();
+
+    if (isset($_SESSION["auth"]) && $_SESSION["auth"] === true) {
+        header("Location: ../public/dashboard.php");
+        exit;
+    }
+    exit();
 ?>
 
 <!DOCTYPE html>
@@ -18,7 +25,7 @@
 
     </div>
 
-    <form id="signup" action="../api/registerkey.php" method="post">
+    <form id="signup" action="../api/register.php" method="post">
         <div id="part1" class="part">
             <div class="form_title">
                 <h1>Registration</h1>

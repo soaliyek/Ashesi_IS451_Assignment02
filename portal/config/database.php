@@ -20,3 +20,5 @@ $connection = new mysqli(
     (int) $env['port']
 );
 $connection->set_charset('utf8mb4');
+
+?>
