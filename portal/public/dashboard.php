@@ -28,15 +28,16 @@ if ($_SESSION["role"] === "STUDENT") {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="dashboard.css">
     <title>University Portal - Dashboard</title>
-    <style>
+    <!-- <style>
         body { font-family: Arial, sans-serif; margin: 20px; background-color: #f4f49; }
         header { background: #fff; padding: 15px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
         #profile { display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px; }
         nav button { padding: 8px 15px; margin-right: 5px; cursor: pointer; }
         .subdivision { margin-top: 20px; background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
         .row { display: flex; gap: 15px; margin-bottom: 10px; align-items: center; }
-    </style>
+    </style> -->
 </head>
 <body>
     <header>
@@ -106,8 +107,17 @@ if ($_SESSION["role"] === "STUDENT") {
         // Negative Test Check: Attempting to change role should be rejected by server API
         async function handleRoleChange(event) {
             event.preventDefault();
-            const newRole = document.getElementById('roleInput').value.trim();
+            const inputElement = document.getElementById('roleInput');
+            
+            if (!inputElement) {
+                alert("Role input element not found!");
+                return;
+            }
+
+            const newRole = inputElement.value.trim();
             const feedback = document.getElementById('roleFeedback');
+
+            console.log("Captured Role Value:", newRole); // Check console instead of alert(text, obj)
 
             const res = await fetch('../api/update_role.php', {
                 method: 'POST',
@@ -117,6 +127,23 @@ if ($_SESSION["role"] === "STUDENT") {
             const data = await res.json();
             feedback.textContent = data.message;
         }
+        /*
+        async function handleRoleChange(event) {
+            event.preventDefault();
+            const newRole = document.getElementById('roleInput').value.trim();
+            const feedback = document.getElementById('roleFeedback');
+
+            alert('NEW ROLE:', newRole);
+
+            const res = await fetch('../api/update_role.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ role: newRole })
+            });
+            const data = await res.json();
+            feedback.textContent = data.message;
+        }
+            */
 
         // Placeholder fetch functions for dashboard data
         async function loadMyGrades() {
@@ -174,12 +201,15 @@ if ($_SESSION["role"] === "STUDENT") {
             }
 
             const newGrade = inputField.value.trim();
+            console.log('Sending new grade:', newGrade, 'for course:', courseCode, 'student:', studentID);
+
             const res = await fetch('../api/update_grade.php', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ studentID, courseCode, grade: newGrade })
             });
-            const data = await res.json();
+
+            const data = await res.json(); // <-- Uncommented this so data is defined!
             alert(data.message);
         }
         /*
